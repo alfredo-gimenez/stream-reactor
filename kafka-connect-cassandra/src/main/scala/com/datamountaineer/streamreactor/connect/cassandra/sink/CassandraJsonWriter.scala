@@ -160,6 +160,7 @@ class CassandraJsonWriter(connection: CassandraConnection, settings: CassandraSi
               record.valueSchema(),
               record.value(),
               kcql.hasRetainStructure())
+              .replaceAll("(?<!\\\\)\"([^(?<!\\\\)\"]*)(?<!\\\\)\"\\s*:", "\"\\\\\"$1\\\\\"\":") // Add escaped quotes to column names to preserve case in column names
 
             try {
               val bound = statement.bind(json)
