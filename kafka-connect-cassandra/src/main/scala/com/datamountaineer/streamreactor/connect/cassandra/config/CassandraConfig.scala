@@ -69,14 +69,14 @@ case class CassandraConfig() {
       ConfigDef.Width.LONG,
       CassandraConfigConstants.USERNAME)
 
-    .define(CassandraConfigConstants.PASSWD,
-      Type.PASSWORD, "",
-      Importance.LOW,
-      CassandraConfigConstants.PASSWD_DOC,
+    .define(CassandraConfigConstants.PASSWD_FILE,
+      Type.STRING, "",
+      Importance.HIGH,
+      CassandraConfigConstants.PASSWD_FILE_DOC,
       "Connection",
       5,
       ConfigDef.Width.LONG,
-      CassandraConfigConstants.PASSWD
+      CassandraConfigConstants.PASSWD_FILE
     )
 
     .define(CassandraConfigConstants.SSL_ENABLED,
