@@ -121,7 +121,7 @@ allprojects {
 
         // The following 4 need to align to compile against a particular version
         confluentVersion = '4.0.0'
-        kafkaVersion = '1.0.0'
+        kafkaVersion = '1.1.0'
         dataMountaineerCommonVersion = "1.0.3"
         dataMountaineerTestKitVersion = "0.7"
 

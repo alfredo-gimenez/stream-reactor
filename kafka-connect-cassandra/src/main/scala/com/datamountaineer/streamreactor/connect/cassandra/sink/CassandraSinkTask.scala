@@ -17,10 +17,12 @@
 package com.datamountaineer.streamreactor.connect.cassandra.sink
 
 import java.util
+import java.util.Properties
 
 import com.datamountaineer.streamreactor.connect.cassandra.config.{CassandraConfigSink, CassandraSettings}
-import com.datamountaineer.streamreactor.connect.utils.{ProgressCounter, JarManifest}
+import com.datamountaineer.streamreactor.connect.utils.{JarManifest, ProgressCounter}
 import com.typesafe.scalalogging.slf4j.StrictLogging
+import org.apache.kafka.clients.admin.{AdminClient, AdminClientConfig, RecordsToDelete}
 import org.apache.kafka.clients.consumer.OffsetAndMetadata
 import org.apache.kafka.common.TopicPartition
 import org.apache.kafka.connect.errors.ConnectException
@@ -40,9 +42,18 @@ class CassandraSinkTask extends SinkTask with StrictLogging {
   private var writer: Option[CassandraJsonWriter] = None
   private val progressCounter = new ProgressCounter
   private var enableProgress: Boolean = false
+  private var deleteSunkKafkaRecords: Boolean = false
   private val manifest = JarManifest()
   logger.info("Task initialising")
 
+  /**
+    * Get a Kafka admin client
+    **/
+  private val kafkaAdminClient: AdminClient = {
+    val p = new Properties()
+    p.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092") // we are a Kafka task, localhost will have Kafka
+    AdminClient.create(p)
+  }
 
   /**
     * Parse the configurations and setup the writer
@@ -58,6 +69,7 @@ class CassandraSinkTask extends SinkTask with StrictLogging {
     logger.info(scala.io.Source.fromInputStream(getClass.getResourceAsStream("/cass-sink-ascii.txt")).mkString + s" v $version")
     logger.info(manifest.printManifest())
     writer = Some(CassandraWriter(connectorConfig = taskConfig, context = context))
+    deleteSunkKafkaRecords = sinkSettings.deleteSunkKafkaRecords
   }
 
   /**
@@ -83,7 +95,12 @@ class CassandraSinkTask extends SinkTask with StrictLogging {
     }
   }
 
-  override def flush(map: util.Map[TopicPartition, OffsetAndMetadata]): Unit = {}
+  override def flush(map: util.Map[TopicPartition, OffsetAndMetadata]): Unit = {
+    if (deleteSunkKafkaRecords) {
+      val recordsBeforeOffset = map.mapValues(om => RecordsToDelete.beforeOffset(om.offset()))
+      kafkaAdminClient.deleteRecords(recordsBeforeOffset)
+    }
+  }
 
   override def version: String = manifest.version()
 }

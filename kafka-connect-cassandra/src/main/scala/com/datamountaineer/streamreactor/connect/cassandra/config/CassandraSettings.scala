@@ -66,7 +66,8 @@ case class CassandraSinkSetting(keySpace: String,
                                 enableProgress: Boolean = CassandraConfigConstants.PROGRESS_COUNTER_ENABLED_DEFAULT,
                                 deleteEnabled: Boolean = CassandraConfigConstants.DELETE_ROW_ENABLED_DEFAULT,
                                 deleteStatement: String = CassandraConfigConstants.DELETE_ROW_STATEMENT_DEFAULT,
-                                deleteStructFields: Seq[String] = Seq.empty) extends CassandraSetting
+                                deleteStructFields: Seq[String] = Seq.empty,
+                                deleteSunkKafkaRecords: Boolean = false) extends CassandraSetting
 
 /**
   * Cassandra Setting used for both Readers and writers
@@ -143,6 +144,8 @@ object CassandraSettings extends StrictLogging {
 
     val structFlds = config.getList(CassandraConfigConstants.DELETE_ROW_STRUCT_FLDS)
 
+    val deleteSunk = config.getBoolean(CassandraConfigConstants.DELETE_SUNK_KAFKA_RECORDS)
+
     CassandraSinkSetting(keySpace,
       kcqls,
       fields,
@@ -154,6 +157,7 @@ object CassandraSettings extends StrictLogging {
       enableCounter,
       deleteEnabled,
       deleteStmt,
-      structFlds)
+      structFlds,
+      deleteSunk)
   }
 }

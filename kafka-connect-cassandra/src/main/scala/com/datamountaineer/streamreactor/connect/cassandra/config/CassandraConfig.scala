@@ -70,7 +70,7 @@ case class CassandraConfig() {
       CassandraConfigConstants.USERNAME)
 
     .define(CassandraConfigConstants.PASSWD_FILE,
-      Type.STRING, "",
+      Type.PASSWORD, "",
       Importance.HIGH,
       CassandraConfigConstants.PASSWD_FILE_DOC,
       "Connection",
@@ -209,6 +209,15 @@ case class CassandraConfig() {
       ConfigDef.Width.LONG,
       CassandraConfigConstants.FETCH_SIZE)
 
+    .define(CassandraConfigConstants.DELETE_SUNK_KAFKA_RECORDS,
+      Type.BOOLEAN,
+      CassandraConfigConstants.DELETE_SUNK_KAFKA_RECORDS_DEFAULT,
+      Importance.HIGH,
+      CassandraConfigConstants.DELETE_SUNK_KAFKA_RECORDS_DOC,
+      "Connection",
+      16,
+      ConfigDef.Width.LONG,
+      CassandraConfigConstants.DELETE_SUNK_KAFKA_RECORDS)
 }
 
 

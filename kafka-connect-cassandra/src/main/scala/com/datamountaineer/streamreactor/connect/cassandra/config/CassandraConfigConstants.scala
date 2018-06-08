@@ -87,6 +87,10 @@ object CassandraConfigConstants {
   val KEY_STORE_TYPE_DOC = "Type of the Key Store, defauts to JKS"
   val KEY_STORE_TYPE_DEFAULT = "JKS"
 
+  val DELETE_SUNK_KAFKA_RECORDS = "delete.sunk.kafka.records"
+  val DELETE_SUNK_KAFKA_RECORDS_DOC = "Whether to delete Kafka records after they are sunk into Cassandra."
+  val DELETE_SUNK_KAFKA_RECORDS_DEFAULT = "false"
+
   //source
 
   val BATCH_SIZE = s"$CONNECTOR_PREFIX.$BATCH_SIZE_PROP_SUFFIX"
