@@ -98,6 +98,7 @@ class CassandraSinkTask extends SinkTask with StrictLogging {
   override def flush(map: util.Map[TopicPartition, OffsetAndMetadata]): Unit = {
     if (deleteSunkKafkaRecords) {
       val recordsBeforeOffset = map.mapValues(om => RecordsToDelete.beforeOffset(om.offset()))
+      logger.info("Deleting sunk records")
       kafkaAdminClient.deleteRecords(recordsBeforeOffset)
     }
   }
